@@ -1,0 +1,112 @@
+version : "3"
+
+services:
+  #RabbitMq
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-container
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+    environment:
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+
+
+
+  #MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    ports:
+      - 27017:27017
+
+  #MysqlDB
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3307:3306
+
+  eureka-service:
+    image: eureka-service:1.0
+    container_name: eureka-service
+    ports:
+      - 8761:8761
+
+  #ApiGateway-Service
+  apiGateway-service:
+    image: apigateway-service:1.0
+    container_name: apigateway-service
+    ports:
+      - 8080:8080
+
+
+  #appointment-Service
+  appointment-service:
+    image: appointment-service:1.0
+    container_name: appointment-service
+    ports:
+      - 7777:7777
+    links:
+      - mongodb
+
+  #feedback-Service
+  feedback-service:
+    image: feedback-service:1.0
+    container_name: feedback-service
+    ports:
+      - 8889:8889
+    links:
+      - mongodb
+
+  #User-Service
+  user-service:
+    image: user-service:1.0
+    container_name: user-service
+    ports:
+      - 8098:8098
+    links:
+      - mongodb
+
+  #package-Service
+  package-service:
+    image: package-service:1.0
+    container_name: package-service
+    ports:
+      - 9090:9090
+    links:
+      - mongodb
+
+  #authentication-Service
+  authentication-service:
+    image: authentication-service:1.0
+    container_name: authentication-service
+    ports:
+      - 9876:9876
+    links:
+      - mysqldb
+
+
+
+  wishlist-service:
+    image: wishlist-service:1.0
+    container_name: wishlist-service
+    ports:
+      - 8080:8080
+    links:
+      - mongodb
+
+
+  email-service:
+      container_name: email-service
+      build: ./email-service
+      hostname: localhost
+      ports:
+        - 8083:8083
+
+

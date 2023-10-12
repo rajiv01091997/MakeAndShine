@@ -1,0 +1,72 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: 8080
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: "api-gateway"
+  cloud:
+    gateway:
+      routes:
+        - id: user-Service
+          uri: http://user-service:8098/
+          predicates:
+             - Path=/api/v2/user/**
+
+        - id: salon-service
+          uri: http://localhost:8082/
+          predicates:
+             - Path=/api/v2/**
+
+        - id: email-Service
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/v3/**
+
+        - id: wishlist-Service
+          uri: http://localhost:8888/
+          predicates:
+            - Path=/api/v1/**
+
+        - id: authentication-service
+          uri: http://authentication-service:9876/
+          predicates:
+            - Path=/api/auth/**
+
+        - id: appointment-service
+          uri: http://localhost:7777/
+          predicates:
+            - Path=/api/booking/appointment/**
+
+        - id: payment-service
+          uri: http://localhost:8099/
+          predicates:
+            - Path=/api/v/payment/**
+
+        - id: package-service
+          uri: http://localhost:9090/
+          predicates:
+            - Path=/api/v5/package/**
+
+        - id: feedback-service
+          uri: http://localhost:8889/
+          predicates:
+            - Path=/api/v6/**
+
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins:
+#              - "http://localhost:8086"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - PATCH
